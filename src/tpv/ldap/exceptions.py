@@ -1,0 +1,2 @@
+class KeyCollision(KeyError):
+    pass
