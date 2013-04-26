@@ -6,7 +6,19 @@ from .exceptions import KeyCollision
 from ._entry import Entry
 
 
+def trace(fn):
+    def traced(*args, **kw):
+        print 'trace fn: %s: %s\ntrace []: %s\ntrace {}:%s' % \
+            (fn.__name__, fn, args, kw)
+        result = fn(*args, **kw)
+        print '>>>>>>: %r' % (result,)
+        return result
+    return traced
+
+
 class Directory(object):
+    trace_ldap_calls = None
+
     Entry = Entry
     _ldap = None
 
@@ -17,6 +29,8 @@ class Directory(object):
                 del self._ldap
         if self._ldap is None:
             self._ldap = pyldap.PyReconnectLDAPObject(self.uri)
+            for name in (self.trace_ldap_calls or ()):
+                setattr(self._ldap, name, trace(getattr(self._ldap, name)))
             self._ldap.bind_s(self.bind_dn, self.bind_pw)
         return self._ldap
 
