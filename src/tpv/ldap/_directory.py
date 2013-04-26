@@ -53,19 +53,26 @@ class Directory(object):
         except ldap.NO_SUCH_OBJECT:
             raise KeyError(dn)
 
-    def _search(self, base, scope=pyldap.SCOPE_SUBTREE, criteria=None,
-                attrlist=None, timeout=10):
-        filterstr = self._criteria_to_filterstr(*criteria)
-        return (self.Entry(dn=x[0], cached_attributes=x[1], directory=self)
-                for x in self.ldap.search_s(base=base, scope=scope,
-                                            filterstr=filterstr,
-                                            attrlist=attrlist)
-                if x[0] != base or scope == pyldap.SCOPE_BASE
+    def search(self, base, scope=pyldap.SCOPE_SUBTREE, criteria=None,
+               filterstr=None, attrlist=None, timeout=10):
+        if criteria:
+            filter = self._criteria_to_filterstr(*criteria)
+            filter = filter & filterstr
+            filterstr = unicode(filterstr)
+        return (
+            self.Entry(dn=dn, cached_attributes=attributes, directory=self)
+            for dn, attributes in self.ldap.search_s(base=base, scope=scope,
+                                                     filterstr=filterstr,
+                                                     attrlist=attrlist)
+            if dn != base or scope == pyldap.SCOPE_BASE
         )
 
-    def _criteria_to_filterstr(self, *criteria):
+    def _criteria_to_filter(self, criteria):
+        # XXX: passing of criteria feels complicated
+        if type(criteria) not in (tuple, list):
+            raise ValueError(
+                "Criteria not list of dicts, but: %r" % criteria)
         filter = pyldap.filter.LDAPDictFilter(criteria.pop(0))
         while criteria:
             filter = filter | pyldap.filter.LDAPDictFilter(criteria.pop(0))
-        filterstr = unicode(filter)
-        return filterstr
+        return filter
