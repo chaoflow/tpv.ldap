@@ -83,7 +83,7 @@ class attribute_name_mapping(attribute_name_mapping_base):
     @aspect.plumb
     def update(_next, self, attributes):
         attributes = OrderedDict(
-            (self.incoming_attribute_map[k], v) for k, v in attributes
+            (self.incoming_attribute_map[k], v) for k, v in attributes.items()
         )
         return _next(attributes)
 
@@ -92,7 +92,7 @@ class children_attribute_name_mapping(attribute_name_mapping_base):
     @aspect.plumb
     def add(_next, self, attributes):
         attributes = OrderedDict(
-            (self.incoming_attribute_map[k], v) for k, v in attributes
+            (self.incoming_attribute_map[k], v) for k, v in attributes.items()
         )
         return _next(attributes)
 
