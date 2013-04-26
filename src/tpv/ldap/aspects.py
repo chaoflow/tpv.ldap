@@ -35,6 +35,14 @@ class id_instead_of_dn(Aspect):
         id = self._id_from_dn(self, dn)
         return id
 
+    @aspect.plumb
+    def __iter__(_next, self):
+        return (self._id_from_dn(dn) for dn in _next())
+
+    @aspect.plumb
+    def iteritems(_next, self):
+        return ((self._id_from_dn(dn), node) for dn, node in _next())
+
     def _dn_from_id(self, id):
         """Application needs to overwrite this
         """
