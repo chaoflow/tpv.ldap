@@ -7,6 +7,8 @@ import tpv
 from metachao import aspect
 from metachao.aspect import Aspect
 
+from tpv.ordereddict import OrderedDict
+
 
 class add(Aspect):
     """Support adding a user without knowing the dn
