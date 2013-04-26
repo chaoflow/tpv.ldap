@@ -67,12 +67,14 @@ class Directory(object):
         except ldap.NO_SUCH_OBJECT:
             raise KeyError(dn)
 
-    def search(self, base, scope=pyldap.SCOPE_SUBTREE, criteria=None,
-               filterstr=None, attrlist=None, timeout=10):
+    def search(self, base, scope, criteria=None, filterstr=None,
+               attrlist=None, timeout=10):
         if criteria:
             filter = self._criteria_to_filterstr(*criteria)
             filter = filter & filterstr
             filterstr = unicode(filterstr)
+        if attrlist is None:
+            attrlist = [''] # meaning: not attributes, ['*'] all, ['+'] internal
         return (
             self.Entry(dn=dn, cached_attributes=attributes, directory=self)
             for dn, attributes in self.ldap.search_s(base=base, scope=scope,
