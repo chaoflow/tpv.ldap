@@ -71,19 +71,19 @@ class attribute_name_mapping_base(Aspect):
 class attribute_name_mapping(attribute_name_mapping_base):
     @aspect.plumb
     def __getitem__(_next, self, key):
-        key = self.incoming_attribute_map.get(key, key)
+        key = self.incoming_attribute_map[key]
         value = _next(key)
         return value
 
     @aspect.plumb
     def __setitem__(_next, self, key, value):
-        key = self.incoming_attribute_map.get(key, key)
+        key = self.incoming_attribute_map[key]
         return _next(key, value)
 
     @aspect.plumb
     def update(_next, self, attributes):
         attributes = OrderedDict(
-            (self.incoming_attribute_map.get(k,k), v) for k, v in attributes
+            (self.incoming_attribute_map[k], v) for k, v in attributes
         )
         return _next(attributes)
 
@@ -92,7 +92,7 @@ class children_attribute_name_mapping(attribute_name_mapping_base):
     @aspect.plumb
     def add(_next, self, attributes):
         attributes = OrderedDict(
-            (self.incoming_attribute_map.get(k,k), v) for k, v in attributes
+            (self.incoming_attribute_map[k], v) for k, v in attributes
         )
         return _next(attributes)
 
