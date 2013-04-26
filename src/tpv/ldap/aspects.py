@@ -122,10 +122,15 @@ class view(aspect.Aspect):
         pass
 
     def __iter__(self):
-        raise NotImplemented
+        return self.search(attrlist=[''])
 
     def itervalues(self):
-        raise NotImplemented
+        return self.search()
 
     def iteritems(self):
-        raise NotImplemented
+        return ((node.dn, node) for node in self.itervalues())
+
+    @aspect.plumb
+    def search(_next, self, attrlist=None):
+        return _next(base=self.base_dn, scope=self.scope,
+                     filterstr=self.filterstr, attrlist=attrlist)
