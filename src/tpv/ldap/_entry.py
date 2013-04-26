@@ -8,9 +8,10 @@ import tpv.aspects
 
 class cache_attributes(Aspect):
     @aspect.plumb
-    def __init__(_next, self, cached_attributes=None, **kw):
+    def __init__(_next, self, attributes=None, cached_attributes=None, **kw):
         _next(**kw)
-        self.cache = dict(cached_attributes)
+        self.cache = dict(attributes or ())
+        self.cache.update(cached_attributes or ())
 
     @aspect.plumb
     def iteritems(_next, self):
@@ -46,3 +47,6 @@ class Entry(object):
     def update(self, attributes):
         """Attributes is a dictionary
         """
+
+    def __repr__(self):
+        return "<%s %s>" % (self.__class__.__name__, self.dn)

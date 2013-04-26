@@ -59,7 +59,7 @@ class Directory(object):
         try:
             self.ldap.add_s(dn, addlist)
         except ldap.ALREADY_EXISTS:
-            raise KeyCollision(key)
+            raise KeyCollision(dn)
 
     def __delitem__(self, dn):
         try:
@@ -69,10 +69,11 @@ class Directory(object):
 
     def search(self, base, scope, criteria=None, filterstr=None,
                attrlist=None, timeout=10):
+        filterstr = filterstr or '(objectClass=*)'
         if criteria:
-            filter = self._criteria_to_filterstr(*criteria)
+            filter = self._criteria_to_filter(criteria)
             filter = filter & filterstr
-            filterstr = unicode(filterstr)
+            filterstr = unicode(filter)
         if attrlist is None:
             attrlist = [''] # meaning: not attributes, ['*'] all, ['+'] internal
         return (

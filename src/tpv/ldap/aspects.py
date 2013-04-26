@@ -16,7 +16,7 @@ class add(Aspect):
     def add(self, attributes):
         dn = self._dn_from_attributes(attributes)
         entry = self.Entry(dn=dn, attributes=attributes)
-        seld[dn] = entry
+        self[dn] = entry
         return dn
 
     def _dn_from_attributes(self, attributes):
