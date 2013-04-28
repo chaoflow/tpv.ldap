@@ -28,13 +28,13 @@ class add(Aspect):
 class id_instead_of_dn(Aspect):
     @aspect.plumb
     def __getitem__(_next, self, id):
-        dn = self._dn_from_id(self, id)
+        dn = self._dn_from_id(id)
         _next(dn)
 
     @aspect.plumb
     def add(_next, self, attributes):
         dn = _next(attributes)
-        id = self._id_from_dn(self, dn)
+        id = self._id_from_dn(dn)
         return id
 
     @aspect.plumb
