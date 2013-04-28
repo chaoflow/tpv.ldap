@@ -19,7 +19,7 @@ def trace(fn):
 class Directory(object):
     trace_ldap_calls = None
 
-    Entry = Entry
+    Child = Entry
     _ldap = None
 
     @property
@@ -51,7 +51,7 @@ class Directory(object):
             entry = self.ldap.search_s(dn, ldap.SCOPE_BASE)[0]
         except ldap.NO_SUCH_OBJECT:
             raise KeyError(dn)
-        node = self.Entry(dn=dn, attributes=entry[1], directory=self)
+        node = self.Child(dn=dn, attributes=entry[1], directory=self)
         return node
 
     def __setitem__(self, dn, node):
@@ -75,9 +75,9 @@ class Directory(object):
             filter = filter & filterstr
             filterstr = unicode(filter)
         if attrlist is None:
-            attrlist = [''] # meaning: not attributes, ['*'] all, ['+'] internal
+            attrlist = [''] # meaning: no attributes, ['*'] all, ['+'] internal
         return (
-            self.Entry(dn=dn, cached_attributes=attributes, directory=self)
+            self.Child(dn=dn, cached_attributes=attributes, directory=self)
             for dn, attributes in self.ldap.search_s(base=base, scope=scope,
                                                      filterstr=filterstr,
                                                      attrlist=attrlist)

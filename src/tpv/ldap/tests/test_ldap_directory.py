@@ -49,7 +49,7 @@ class TestLDAPDirectory(mixins.Slapd, unittest.TestCase):
 
     def test_setitem(self):
         dn = 'cn=cn2,o=o'
-        node = self.dir.Entry(dn=dn, attributes=self.ADDITIONAL[dn])
+        node = self.dir.Child(dn=dn, attributes=self.ADDITIONAL[dn])
 
         def addnode():
             self.dir[dn] = node
@@ -82,7 +82,7 @@ class TestLDAPDirectory(mixins.Slapd, unittest.TestCase):
 
     def test_search_subtree_filterstr(self):
         dn = 'cn=child,cn=cn1,o=o'
-        node = self.dir.Entry(dn=dn, attributes=self.ADDITIONAL[dn])
+        node = self.dir.Child(dn=dn, attributes=self.ADDITIONAL[dn])
         self.dir[dn] = node
 
         search = list(self.dir.search(base='o=o',
@@ -92,13 +92,13 @@ class TestLDAPDirectory(mixins.Slapd, unittest.TestCase):
 
     def test_search_subtree_filterstr_criteria(self):
         dn = 'cn=child,cn=cn1,o=o'
-        node = self.dir.Entry(dn=dn, attributes=self.ADDITIONAL[dn])
+        node = self.dir.Child(dn=dn, attributes=self.ADDITIONAL[dn])
         self.dir[dn] = node
         dn = 'cn=child2,cn=cn1,o=o'
-        node = self.dir.Entry(dn=dn, attributes=self.ADDITIONAL[dn])
+        node = self.dir.Child(dn=dn, attributes=self.ADDITIONAL[dn])
         self.dir[dn] = node
         dn = 'cn=cn2,o=o'
-        node = self.dir.Entry(dn=dn, attributes=self.ADDITIONAL[dn])
+        node = self.dir.Child(dn=dn, attributes=self.ADDITIONAL[dn])
         self.dir[dn] = node
 
         search = list(self.dir.search(base='o=o',
