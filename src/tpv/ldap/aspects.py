@@ -102,7 +102,7 @@ class children_attribute_name_mapping(attribute_name_mapping_base):
         if self.attribute_name_map:
             node = attribute_name_mapping(
                 node,
-                attribute_name_map=attribute_name_map,
+                attribute_name_map=self.attribute_name_map,
             )
         return node
 
