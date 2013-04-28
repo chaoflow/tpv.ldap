@@ -69,6 +69,13 @@ class Directory(object):
 
     def search(self, base, scope, criteria=None, filterstr=None,
                attrlist=None, timeout=10):
+        """search the ldap directory
+
+        At the very least base dn and scope are needed. You will
+        receive empty nodes that are able to fetch their attributes as
+        children.
+
+        """
         filterstr = filterstr or '(objectClass=*)'
         if criteria:
             filter = self._criteria_to_filter(criteria)
