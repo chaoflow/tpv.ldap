@@ -29,7 +29,7 @@ class id_instead_of_dn(Aspect):
     @aspect.plumb
     def __getitem__(_next, self, id):
         dn = self._dn_from_id(id)
-        _next(dn)
+        return _next(dn)
 
     @aspect.plumb
     def add(_next, self, attributes):
