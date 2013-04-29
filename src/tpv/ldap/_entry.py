@@ -10,7 +10,8 @@ class cache_attributes(Aspect):
     @aspect.plumb
     def __init__(_next, self, attributes=None, **kw):
         _next(**kw)
-        self.cache = dict(attributes or ())
+        if attributes is not None:
+            self.cache = dict(attributes or ())
 
     def __iter__(self):
         return iter(self.cache)
