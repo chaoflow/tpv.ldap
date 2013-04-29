@@ -1,5 +1,6 @@
 import ldap
 import pyldap
+import pyldap.filter
 
 from .exceptions import KeyCollision
 
