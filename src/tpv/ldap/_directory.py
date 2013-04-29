@@ -88,7 +88,7 @@ class Directory(object):
         if attrlist is None:
             attrlist = [''] # meaning: no attributes, ['*'] all, ['+'] internal
         return (
-            self.Child(dn=dn, cached_attributes=attributes, directory=self)
+            self.Child(dn=dn, attributes=attributes, directory=self)
             for dn, attributes in self.ldap.search_s(base=base, scope=scope,
                                                      filterstr=filterstr,
                                                      attrlist=attrlist)

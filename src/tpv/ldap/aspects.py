@@ -128,9 +128,6 @@ class view(aspect.Aspect):
     # dn_from_attributes = aspect.aspectkw(dn_from_attributes=None)
     # id_from_dn = aspect.aspectkw(id_from_dn=None)
 
-    def __getitem__(self, id):
-        pass
-
     def __iter__(self):
         return self.search(attrlist=[''])
 
