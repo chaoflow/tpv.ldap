@@ -84,6 +84,7 @@ Error setting up testcase: %s
         self.bind_pw = bind_pw
         self.BASE = base
 
+        self.TESTROOT = os.getcwdu()
         os.chdir(self.basedir)
 
         # wait for ldap to appear
@@ -104,15 +105,13 @@ Error setting up testcase: %s
         # add base dn and per testcase entries
         self.ldap.add_s(*self.BASE)
 
-        msgids = [self.ldap.add(dn, self.ENTRIES[dn])
-                  for dn in getattr(self, 'ENTRIES', ())]
-        for id in msgids:
-            self.ldap.result(id)
-
+        for dn, entry in getattr(self, 'ENTRIES', dict()).items():
+            self.ldap.add_s(dn, entry)
 
     def tearDown(self):
         self.slapd.kill()
         self.slapd.wait()
         successful = sys.exc_info() == (None, None, None)
         if successful or not KEEP_FAILED:
+            os.chdir(self.TESTROOT)
             shutil.rmtree(self.basedir)
