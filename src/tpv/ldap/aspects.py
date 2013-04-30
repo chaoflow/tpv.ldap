@@ -15,7 +15,7 @@ class add(Aspect):
     """
     def add(self, attributes):
         dn = self._dn_from_attributes(attributes)
-        entry = self.Entry(dn=dn, attributes=attributes)
+        entry = self.Child(dn=dn, attributes=attributes)
         self[dn] = entry
         return dn
 
