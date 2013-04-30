@@ -29,7 +29,9 @@ class id_instead_of_dn(Aspect):
     @aspect.plumb
     def __getitem__(_next, self, id):
         dn = self._dn_from_id(id)
-        return _next(dn)
+        node = _next(dn)
+        node._id = id
+        return node
 
     @aspect.plumb
     def add(_next, self, attributes):
@@ -110,11 +112,13 @@ class children_attribute_name_mapping(attribute_name_mapping_base):
         node = _next(key)
         if self.attribute_name_map:
             dn = node.dn
+            id = node._id
             node = attribute_name_mapping(
                 node,
                 attribute_name_map=self.attribute_name_map,
             )
             node.dn = dn
+            node._id = id
         return node
 
     # XXX: we need a way to block this, but let add from earlier
