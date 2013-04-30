@@ -57,6 +57,13 @@ class id_instead_of_dn(Aspect):
         """
         raise NotImplemented
 
+    @aspect.plumb
+    def search(_next, self, *args, **kw):
+        for node in _next(*args, **kw):
+            id = self._id_from_dn(node.dn)
+            node._id = id
+            yield node
+
 
 class attribute_name_mapping_base(Aspect):
     attribute_name_map = aspect.aspectkw(None)
@@ -120,6 +127,20 @@ class children_attribute_name_mapping(attribute_name_mapping_base):
             node.dn = dn
             node._id = id
         return node
+
+    @aspect.plumb
+    def search(_next, self, *args, **kw):
+        # XXX: criteria mapping
+        for node in _next(*args, **kw):
+            dn = node.dn
+            id = node._id
+            node = attribute_name_mapping(
+                node,
+                attribute_name_map=self.attribute_name_map,
+            )
+            node.dn = dn
+            node._id = id
+            yield node
 
     # XXX: we need a way to block this, but let add from earlier
     # on use the unblocked version. Actually @add should take care
