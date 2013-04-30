@@ -112,6 +112,6 @@ Error setting up testcase: %s
         self.slapd.kill()
         self.slapd.wait()
         successful = sys.exc_info() == (None, None, None)
+        os.chdir(self.TESTROOT)
         if successful or not KEEP_FAILED:
-            os.chdir(self.TESTROOT)
             shutil.rmtree(self.basedir)
