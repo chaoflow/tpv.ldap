@@ -56,8 +56,9 @@ Error setting up testcase: %s
         # start ldap server
         self.slapdbin = os.path.abspath(SLAPD)
         self.slapdconf = os.path.abspath("etc/openldap/slapd.conf")
-        self.uri = 'ldapi://' + \
-            urllib.quote('/'.join([self.basedir, 'ldapi']), safe='')
+        # self.uri = 'ldapi://' + \
+        #     urllib.quote('/'.join([self.basedir, 'ldapi']), safe='')
+        self.uri = 'ldapi://ldapi'
         self.loglevel = SLAPD_LOGLEVEL
 
         # enable setting debug per testcase
@@ -83,6 +84,7 @@ Error setting up testcase: %s
         self.bind_pw = bind_pw
         self.BASE = base
 
+        os.chdir(self.basedir)
 
         # wait for ldap to appear
         waited = 0
@@ -92,7 +94,6 @@ Error setting up testcase: %s
                 self.ldap.bind_s(bind_dn, bind_pw)
             except:
                 if waited > 10:
-                    import ipdb;ipdb.set_trace()
                     self.tearDown()
                     raise
                 time.sleep(0.1)
