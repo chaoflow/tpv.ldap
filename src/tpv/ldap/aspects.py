@@ -109,10 +109,12 @@ class children_attribute_name_mapping(attribute_name_mapping_base):
     def __getitem__(_next, self, key):
         node = _next(key)
         if self.attribute_name_map:
+            dn = node.dn
             node = attribute_name_mapping(
                 node,
                 attribute_name_map=self.attribute_name_map,
             )
+            node.dn = dn
         return node
 
     # XXX: we need a way to block this, but let add from earlier
