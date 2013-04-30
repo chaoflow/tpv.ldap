@@ -75,14 +75,24 @@ Error setting up testcase: %s
             stdout=subprocess.PIPE if not self.DEBUG else None,
             stderr=subprocess.PIPE if not self.DEBUG else None)
 
+        bind_dn = getattr(self, 'bind_dn', 'cn=root,o=o')
+        bind_pw = getattr(self, 'bind_pw', 'secret')
+        base = getattr(self, 'BASE', ('o=o', (('o', 'o'),
+                                              ('objectClass', 'organization'))))
+        self.bind_dn = bind_dn
+        self.bind_pw = bind_pw
+        self.BASE = base
+
+
         # wait for ldap to appear
         waited = 0
         while True:
             try:
                 self.ldap = LDAPObject(self.uri)
-                self.ldap.bind_s('cn=root,o=o', 'secret')
+                self.ldap.bind_s(bind_dn, bind_pw)
             except:
                 if waited > 10:
+                    import ipdb;ipdb.set_trace()
                     self.tearDown()
                     raise
                 time.sleep(0.1)
@@ -91,16 +101,13 @@ Error setting up testcase: %s
                 break
 
         # add base dn and per testcase entries
-        self.ldap.add_s('o=o', (('o', 'o'),
-                                ('objectClass', 'organization'),))
+        self.ldap.add_s(*self.BASE)
 
         msgids = [self.ldap.add(dn, self.ENTRIES[dn])
                   for dn in getattr(self, 'ENTRIES', ())]
         for id in msgids:
             self.ldap.result(id)
 
-        self.bind_dn = 'cn=root,o=o'
-        self.bind_pw = 'secret'
 
     def tearDown(self):
         self.slapd.kill()
