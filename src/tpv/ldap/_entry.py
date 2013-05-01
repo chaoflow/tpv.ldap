@@ -1,5 +1,7 @@
 from __future__ import absolute_import
 
+import ldap
+
 from metachao import aspect
 from metachao.aspect import Aspect
 
@@ -44,12 +46,25 @@ class Entry(object):
     def ldap(self):
         return self.directory.ldap
 
+    @property
+    def ROOT(self):
+        return self.directory.ROOT
+
     def __init__(self, dn=None, directory=None):
         self.dn = dn
         self.directory = directory
 
+    def get(self, key, default=None):
+        try:
+            return self[key]
+        except KeyError:
+            return default
+
     def __setitem__(self, key, value):
         self.update({key: value})
+
+    def __delitem__(self, key, value=None):
+        self.ldap.modify_s(self.dn, [(ldap.MOD_DELETE, key, value)])
 
     def update(self, attributes):
         """Attributes is a dictionary
