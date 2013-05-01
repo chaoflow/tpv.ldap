@@ -13,6 +13,7 @@ from .. import Directory
 
 # required environment variables
 SLAPD = os.environ.get('SLAPD') # if not set, quite some tests will be skipped
+SLAPADD = os.environ.get('SLAPADD')
 
 # optional environment variables
 DEBUG = bool(os.environ.get('DEBUG'))
@@ -55,6 +56,7 @@ Error setting up testcase: %s
 
         # start ldap server
         self.slapdbin = os.path.abspath(SLAPD)
+        self.slapadd = os.path.abspath(SLAPADD)
         self.slapdconf = os.path.abspath("etc/openldap/slapd.conf")
         # self.uri = 'ldapi://' + \
         #     urllib.quote('/'.join([self.basedir, 'ldapi']), safe='')
@@ -67,6 +69,19 @@ Error setting up testcase: %s
         self.debugflags = tuple(itertools.chain.from_iterable(
             iter(('-d', x)) for x in self.loglevel.split(',')
         ))
+
+        if hasattr(self, 'BASE_LDIF'):
+            retcode = subprocess.call(
+                (self.slapadd,
+                 "-l", os.path.abspath(self.BASE_LDIF),
+                 "-f", self.slapdconf),
+                cwd=self.basedir,
+                stdout=subprocess.PIPE if not self.DEBUG else None,
+                stderr=subprocess.PIPE if not self.DEBUG else None)
+
+            if retcode != 0:
+                raise Error
+
         self.slapd = subprocess.Popen(
             (self.slapdbin,
              "-f", self.slapdconf,
@@ -78,11 +93,8 @@ Error setting up testcase: %s
 
         bind_dn = getattr(self, 'bind_dn', 'cn=root,o=o')
         bind_pw = getattr(self, 'bind_pw', 'secret')
-        base = getattr(self, 'BASE', ('o=o', (('o', 'o'),
-                                              ('objectClass', 'organization'))))
         self.bind_dn = bind_dn
         self.bind_pw = bind_pw
-        self.BASE = base
 
         self.TESTROOT = os.getcwdu()
         os.chdir(self.basedir)
@@ -103,7 +115,12 @@ Error setting up testcase: %s
                 break
 
         # add base dn and per testcase entries
-        self.ldap.add_s(*self.BASE)
+        if not hasattr(self, 'BASE_LDIF'):
+            base = getattr(self, 'BASE',
+                           ('o=o', (('o', 'o'),
+                                    ('objectClass', 'organization'))))
+            self.BASE = base
+            self.ldap.add_s(*self.BASE)
 
         for dn, entry in getattr(self, 'ENTRIES', dict()).items():
             self.ldap.add_s(dn, entry)
