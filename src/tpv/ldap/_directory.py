@@ -52,7 +52,8 @@ class Directory(object):
 
     def __getitem__(self, dn):
         try:
-            entry = self.ldap.search_s(dn, ldap.SCOPE_BASE)[0]
+            entry = self.ldap.search_s(dn, ldap.SCOPE_BASE,
+                                       attrlist=['*', 'memberOf'])[0]
         except ldap.NO_SUCH_OBJECT:
             raise KeyError(dn)
         node = self.Child(dn=dn, attributes=entry[1], directory=self)
