@@ -174,9 +174,13 @@ class view(aspect.Aspect):
         return ((node.dn, node) for node in self.itervalues())
 
     @aspect.plumb
-    def search(_next, self, attrlist=None, criteria=None):
+    def search(_next, self, attrlist=None, criteria=None, filterstr=None):
+        if filterstr is not None:
+            filterstr = '(&%s%s)' % (filterstr, self.filterstr)
+        else:
+            filterstr = self.filterstr
         return _next(base=self.base_dn,
                      scope=self.scope,
-                     filterstr=self.filterstr,
+                     filterstr=filterstr,
                      attrlist=attrlist,
                      criteria=criteria)
