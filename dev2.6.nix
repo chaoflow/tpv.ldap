@@ -1,19 +1,24 @@
 { }:
 
+with import <nixpkgs> {};
+
 let
-  base = import ./base.nix { };
+  python = python26;
+  pythonPackages = python26Packages;
+  base = import ./base.nix {
+    inherit python pythonPackages;
+    pythonDocs = pythonDocs.html.python26;
+  };
 
 in
-
-with import <nixpkgs> {};
 
 buildEnv {
   name = "dev-env";
   ignoreCollisions = true;
   paths = [
     (openldap.override { cyrus_sasl = null; openssl = null; })
-    python26Packages.ldap
-    python26Packages.ordereddict
-    python26Packages.zope_interface
-  ] ++ base.paths26;
+    pythonPackages.ldap
+    pythonPackages.ordereddict
+    pythonPackages.zope_interface
+  ] ++ base.paths;
 }
