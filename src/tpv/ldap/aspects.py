@@ -11,18 +11,11 @@ from tpv.ordereddict import OrderedDict
 
 
 class add(Aspect):
-    """Support adding a user without knowing the dn
-    """
     def add(self, attributes):
-        dn = self._dn_from_attributes(attributes)
+        dn = attributes.pop('dn')
         entry = self.Child(dn=dn, attributes=attributes)
         self[dn] = entry
         return dn
-
-    def _dn_from_attributes(self, attributes):
-        """Application needs to overwrite this
-        """
-        raise NotImplemented
 
 
 class id_instead_of_dn(Aspect):
@@ -161,7 +154,6 @@ class view(aspect.Aspect):
     filterstr = aspect.aspectkw(None)
 
     # dn_from_id = aspect.aspectkw(dn_from_id=None)
-    # dn_from_attributes = aspect.aspectkw(dn_from_attributes=None)
     # id_from_dn = aspect.aspectkw(id_from_dn=None)
 
     def __iter__(self):
