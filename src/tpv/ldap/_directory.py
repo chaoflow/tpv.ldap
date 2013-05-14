@@ -2,7 +2,7 @@ import ldap
 import pyldap
 import pyldap.filter
 
-from .exceptions import KeyCollision
+from tpv import exceptions as exc
 
 from ._entry import Entry
 
@@ -64,7 +64,7 @@ class Directory(object):
         try:
             self.ldap.add_s(dn, addlist)
         except ldap.ALREADY_EXISTS:
-            raise KeyCollision(dn)
+            raise exc.KeyCollision(dn)
 
     def __delitem__(self, dn):
         try:
