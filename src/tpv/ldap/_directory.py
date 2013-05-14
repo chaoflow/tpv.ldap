@@ -9,8 +9,8 @@ from ._entry import Entry
 
 def trace(fn):
     def traced(*args, **kw):
-        print('trace fn: %s: %s\ntrace []: %s\ntrace {}:%s' % \
-            (fn.__name__, fn, args, kw))
+        print('trace fn: %s: %s\ntrace []: %s\ntrace {}:%s' %
+              (fn.__name__, fn, args, kw))
         result = presult = fn(*args, **kw)
         if type(result) in (tuple, list) and len(result) > 10:
             presult = result[:10]

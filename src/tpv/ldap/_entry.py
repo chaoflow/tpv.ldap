@@ -69,9 +69,9 @@ class Entry(object):
     def update(self, attributes):
         """Attributes is a dictionary
         """
-        modlist = [(k in self and ldap.MOD_REPLACE or ldap.MOD_ADD,
-                    k,
-                    v) for k, v in attributes.items()]
+        # XXX: modlist for lists
+        modlist = [(k in self and ldap.MOD_REPLACE or ldap.MOD_ADD, k, v)
+                   for k, v in attributes.items()]
         self.ldap.modify_s(self.dn, modlist)
 
     def __repr__(self):
