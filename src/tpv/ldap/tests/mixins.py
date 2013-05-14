@@ -5,14 +5,12 @@ import subprocess
 import sys
 import time
 import traceback
-import urllib
 
 from ldap.ldapobject import LDAPObject
 
-from .. import Directory
 
 # required environment variables
-SLAPD = os.environ.get('SLAPD') # if not set, quite some tests will be skipped
+SLAPD = os.environ.get('SLAPD')  # if not set, quite some tests will be skipped
 SLAPADD = os.environ.get('SLAPADD')
 
 # optional environment variables
@@ -58,8 +56,6 @@ Error setting up testcase: %s
         self.slapdbin = os.path.abspath(SLAPD)
         self.slapadd = os.path.abspath(SLAPADD)
         self.slapdconf = os.path.abspath("etc/openldap/slapd.conf")
-        # self.uri = 'ldapi://' + \
-        #     urllib.quote('/'.join([self.basedir, 'ldapi']), safe='')
         self.uri = 'ldapi://ldapi'
         self.loglevel = SLAPD_LOGLEVEL
 
