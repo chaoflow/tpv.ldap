@@ -71,6 +71,10 @@ class attribute_name_mapping_base(Aspect):
 
 
 class attribute_name_mapping(attribute_name_mapping_base):
+    @property
+    def attribute_name_map(self):
+        return self.directory.attribute_name_map
+
     @aspect.plumb
     def __getitem__(_next, self, key):
         key = self.incoming_attribute_map.get(key, key)
@@ -107,33 +111,33 @@ class children_attribute_name_mapping(attribute_name_mapping_base):
         )
         return _next(attributes)
 
-    @aspect.plumb
-    def __getitem__(_next, self, key):
-        node = _next(key)
-        if self.attribute_name_map:
-            dn = node.dn
-            id = node._id
-            node = attribute_name_mapping(
-                node,
-                attribute_name_map=self.attribute_name_map,
-            )
-            node.dn = dn
-            node._id = id
-        return node
+    # @aspect.plumb
+    # def __getitem__(_next, self, key):
+    #     node = _next(key)
+    #     if self.attribute_name_map:
+    #         dn = node.dn
+    #         id = node._id
+    #         node = attribute_name_mapping(
+    #             node,
+    #             attribute_name_map=self.attribute_name_map,
+    #         )
+    #         node.dn = dn
+    #         node._id = id
+    #     return node
 
-    @aspect.plumb
-    def search(_next, self, *args, **kw):
-        # XXX: criteria mapping
-        for node in _next(*args, **kw):
-            dn = node.dn
-            id = node._id
-            node = attribute_name_mapping(
-                node,
-                attribute_name_map=self.attribute_name_map,
-            )
-            node.dn = dn
-            node._id = id
-            yield node
+    # @aspect.plumb
+    # def search(_next, self, *args, **kw):
+    #     # XXX: criteria mapping
+    #     for node in _next(*args, **kw):
+    #         dn = node.dn
+    #         id = node._id
+    #         node = attribute_name_mapping(
+    #             node,
+    #             attribute_name_map=self.attribute_name_map,
+    #         )
+    #         node.dn = dn
+    #         node._id = id
+    #         yield node
 
     # XXX: we need a way to block this, but let add from earlier
     # on use the unblocked version. Actually @add should take care
