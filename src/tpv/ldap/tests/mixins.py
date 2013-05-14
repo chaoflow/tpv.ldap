@@ -85,7 +85,7 @@ Error setting up testcase: %s
              "-h", "ldapi://ldapi") + self.debugflags,
             cwd=self.basedir,
             stdout=subprocess.PIPE if not self.DEBUG else None,
-            stderr=subprocess.PIPE if not self.DEBUG else None)
+            stderr=None)
 
         bind_dn = getattr(self, 'bind_dn', 'cn=root,o=o')
         bind_pw = getattr(self, 'bind_pw', 'secret')
