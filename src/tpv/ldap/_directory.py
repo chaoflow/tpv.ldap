@@ -12,7 +12,7 @@ log = logging.getLogger('tpv.ldap')
 
 def trace(fn):
     def traced(*args, **kw):
-        log.debug('trace fn: %s: %s\ntrace []: %s\ntrace {}:%s' %
+        log.debug('trace fn: %s: %s\n\ttrace []: %s\n\ttrace {}:%s' %
                   (fn.__name__, fn, args, kw))
         result = presult = fn(*args, **kw)
         if type(result) in (tuple, list) and len(result) > 10:
