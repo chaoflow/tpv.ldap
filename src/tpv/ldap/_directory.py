@@ -1,4 +1,5 @@
 import ldap
+import logging
 import pyldap
 import pyldap.filter
 
@@ -6,16 +7,18 @@ from tpv import exceptions as exc
 
 from ._entry import Entry
 
+log = logging.getLogger('tpv.ldap')
+
 
 def trace(fn):
     def traced(*args, **kw):
-        print('trace fn: %s: %s\ntrace []: %s\ntrace {}:%s' %
-              (fn.__name__, fn, args, kw))
+        log.debug('trace fn: %s: %s\ntrace []: %s\ntrace {}:%s' %
+                  (fn.__name__, fn, args, kw))
         result = presult = fn(*args, **kw)
         if type(result) in (tuple, list) and len(result) > 10:
             presult = result[:10]
             presult.append('...')
-        print('>>>>>>: %r' % (presult,))
+        log.debug('>>>>>>: %r' % (presult,))
         return result
     return traced
 
