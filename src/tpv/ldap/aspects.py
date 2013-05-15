@@ -125,19 +125,13 @@ class children_attribute_name_mapping(attribute_name_mapping_base):
     #         node._id = id
     #     return node
 
-    # @aspect.plumb
-    # def search(_next, self, *args, **kw):
-    #     # XXX: criteria mapping
-    #     for node in _next(*args, **kw):
-    #         dn = node.dn
-    #         id = node._id
-    #         node = attribute_name_mapping(
-    #             node,
-    #             attribute_name_map=self.attribute_name_map,
-    #         )
-    #         node.dn = dn
-    #         node._id = id
-    #         yield node
+    @aspect.plumb
+    def search(_next, self, criteria=None, **kw):
+        if criteria is not None:
+            criteria = [dict((self.incoming_attribute_map.get(k, k), v)
+                             for k, v in crit.items())
+                        for crit in criteria]
+        return _next(criteria=criteria, **kw)
 
     # XXX: we need a way to block this, but let add from earlier
     # on use the unblocked version. Actually @add should take care
