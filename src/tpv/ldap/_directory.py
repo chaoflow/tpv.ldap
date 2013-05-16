@@ -90,8 +90,7 @@ class Directory(object):
             filter = filter & filterstr
             filterstr = unicode(filter)
         if attrlist is None:
-            attrlist = ['']  # meaning: no attributes, ['*'] all, ['+'] internal
-            attrlist = ['*']  # XXX: only temporarily
+            attrlist = ['*', 'memberOf']
         return (
             self.Child(dn=dn, attributes=attributes, directory=self)
             for dn, attributes in self.ldap.search_s(base=base, scope=scope,
