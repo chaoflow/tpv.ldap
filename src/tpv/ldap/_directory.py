@@ -31,9 +31,9 @@ class Directory(object):
 
     @property
     def ldap(self):
-        if self._ldap is not None:
-            if self._ldap.whoami_s() == '':
-                del self._ldap
+        # if self._ldap is not None:
+        #     if self._ldap.whoami_s() == '':
+        #         del self._ldap
         if self._ldap is None:
             self._ldap = pyldap.PyReconnectLDAPObject(self.uri)
             for name in (self.trace_ldap_calls or ()):
