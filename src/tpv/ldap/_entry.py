@@ -73,7 +73,10 @@ class Entry(object):
         modlist = [((k in self or k == 'userPassword') and
                     ldap.MOD_REPLACE or ldap.MOD_ADD, k, v)
                    for k, v in attributes.items()]
-        self.ldap.modify_s(self.dn, modlist)
+        try:
+            self.ldap.modify_s(self.dn, modlist)
+        except ldap.CONSTRAINT_VIOLATION, e:
+            raise ValueError(unicode(e))
 
     def __repr__(self):
         return "<%s %s>" % (self.__class__.__name__, self.dn)
