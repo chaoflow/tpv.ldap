@@ -76,7 +76,7 @@ class Entry(object):
         try:
             self.ldap.modify_s(self.dn, modlist)
         except ldap.CONSTRAINT_VIOLATION, e:
-            raise ValueError(unicode(e))
+            raise ValueError(dict(password=e['info']))
 
     def __repr__(self):
         return "<%s %s>" % (self.__class__.__name__, self.dn)
