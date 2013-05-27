@@ -70,7 +70,8 @@ class Entry(object):
         """Attributes is a dictionary
         """
         # XXX: modlist for lists
-        modlist = [(k in self and ldap.MOD_REPLACE or ldap.MOD_ADD, k, v)
+        modlist = [((k in self or k == 'userPassword') and
+                    ldap.MOD_REPLACE or ldap.MOD_ADD, k, v)
                    for k, v in attributes.items()]
         self.ldap.modify_s(self.dn, modlist)
 
