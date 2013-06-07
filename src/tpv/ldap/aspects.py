@@ -59,8 +59,6 @@ class id_instead_of_dn(Aspect):
 
 
 class attribute_name_mapping_base(Aspect):
-    attribute_name_map = aspect.aspectkw(None)
-
     @property
     def incoming_attribute_map(self):
         return dict(self.attribute_name_map or ())
@@ -103,6 +101,8 @@ class attribute_name_mapping(attribute_name_mapping_base):
 
 
 class children_attribute_name_mapping(attribute_name_mapping_base):
+    attribute_name_map = aspect.aspectkw(None)
+
     @aspect.plumb
     def add(_next, self, attributes):
         attributes = OrderedDict(
