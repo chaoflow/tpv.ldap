@@ -86,11 +86,11 @@ class Directory(object):
         """
         filterstr = filterstr or '(objectClass=*)'
         if criteria:
-            filter = self._criteria_to_filter(criteria)
+            filter = pyldap.filter.criteria_to_filter(criteria)
             filter = filter & filterstr
             filterstr = unicode(filter)
         if base_criteria:
-            filter = self._criteria_to_filter(base_criteria)
+            filter = pyldap.filter.criteria_to_filter(base_criteria)
             filter = filter & filterstr
             filterstr = unicode(filter)
         if attrlist is None:
@@ -102,13 +102,3 @@ class Directory(object):
                                                      attrlist=attrlist)
             if dn != base or scope == pyldap.SCOPE_BASE
         )
-
-    def _criteria_to_filter(self, criteria):
-        # XXX: passing of criteria feels complicated
-        if type(criteria) not in (tuple, list):
-            raise ValueError(
-                "Criteria not list of dicts, but: %r" % criteria)
-        filter = pyldap.filter.LDAPDictFilter(criteria.pop(0))
-        while criteria:
-            filter = filter | pyldap.filter.LDAPDictFilter(criteria.pop(0))
-        return filter
