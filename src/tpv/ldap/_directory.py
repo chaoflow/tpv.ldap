@@ -75,8 +75,8 @@ class Directory(object):
         except ldap.NO_SUCH_OBJECT:
             raise KeyError(dn)
 
-    def search(self, base, scope, criteria=None, filterstr=None,
-               attrlist=None, timeout=10):
+    def search(self, base, scope, criteria=None, base_criteria=None,
+               filterstr=None, attrlist=None, timeout=10):
         """search the ldap directory
 
         At the very least base dn and scope are needed. You will
@@ -87,6 +87,10 @@ class Directory(object):
         filterstr = filterstr or '(objectClass=*)'
         if criteria:
             filter = self._criteria_to_filter(criteria)
+            filter = filter & filterstr
+            filterstr = unicode(filter)
+        if base_criteria:
+            filter = self._criteria_to_filter(base_criteria)
             filter = filter & filterstr
             filterstr = unicode(filter)
         if attrlist is None:

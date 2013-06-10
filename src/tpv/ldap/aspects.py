@@ -126,12 +126,16 @@ class children_attribute_name_mapping(attribute_name_mapping_base):
     #     return node
 
     @aspect.plumb
-    def search(_next, self, criteria=None, **kw):
+    def search(_next, self, criteria=None, base_criteria=None, **kw):
         if criteria is not None:
             criteria = [dict((self.incoming_attribute_map.get(k, k), v)
                              for k, v in crit.items())
                         for crit in criteria]
-        return _next(criteria=criteria, **kw)
+        if base_criteria is not None:
+            base_criteria = [dict((self.incoming_attribute_map.get(k, k), v)
+                                  for k, v in crit.items())
+                             for crit in base_criteria]
+        return _next(criteria=criteria, base_criteria=base_criteria, **kw)
 
     # XXX: we need a way to block this, but let add from earlier
     # on use the unblocked version. Actually @add should take care
@@ -164,7 +168,8 @@ class view(aspect.Aspect):
         return ((node.dn, node) for node in self.itervalues())
 
     @aspect.plumb
-    def search(_next, self, attrlist=None, criteria=None, filterstr=None):
+    def search(_next, self, attrlist=None, criteria=None,
+               base_criteria=None, filterstr=None):
         if filterstr is not None:
             filterstr = '(&%s%s)' % (filterstr, self.filterstr)
         else:
@@ -173,4 +178,5 @@ class view(aspect.Aspect):
                      scope=self.scope,
                      filterstr=filterstr,
                      attrlist=attrlist,
-                     criteria=criteria)
+                     criteria=criteria,
+                     base_criteria=base_criteria)
