@@ -27,6 +27,11 @@ class id_instead_of_dn(Aspect):
         return node
 
     @aspect.plumb
+    def __delitem__(_next, self, id):
+        dn = self._dn_from_id(id)
+        return _next(dn)
+
+    @aspect.plumb
     def add(_next, self, attributes):
         dn = _next(attributes)
         id = self._id_from_dn(dn)
