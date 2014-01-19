@@ -47,7 +47,7 @@ Error setting up testcase: %s
             stderr=subprocess.PIPE if not self.DEBUG else None)
 
         if retcode != 0:
-            raise Error
+            raise RuntimeError("slapadd on {} returned {}".format(ldif, retcode))
 
     def _setUp(self, ldif=None):
         """start slapd
