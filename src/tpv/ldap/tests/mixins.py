@@ -20,11 +20,11 @@ SLAPD_LOGLEVEL = os.environ.get('SLAPD_LOGLEVEL', '0')
 
 
 class Slapd(object):
-    def setUp(self):
+    def setUp(self, ldif=None):
         if not SLAPD:
             self.skipTest('Skipped as no SLAPD was provided')
         try:
-            self._setUp()
+            self._setUp(ldif)
         except Exception, e:
             # XXX: working around nose to get immediate exception
             # output, not collected after all tests are run
@@ -37,7 +37,19 @@ Error setting up testcase: %s
             self.tearDown()
             raise e
 
-    def _setUp(self):
+    def _slapadd(self, ldif):
+        retcode = subprocess.call(
+            (self.slapadd,
+             "-l", os.path.abspath(ldif),
+             "-f", self.slapdconf),
+            cwd=self.basedir,
+            stdout=subprocess.PIPE if not self.DEBUG else None,
+            stderr=subprocess.PIPE if not self.DEBUG else None)
+
+        if retcode != 0:
+            raise Error
+
+    def _setUp(self, ldif=None):
         """start slapd
 
         ldap data dir is wiped and a fresh base dn added. In case of
@@ -67,16 +79,10 @@ Error setting up testcase: %s
         ))
 
         if hasattr(self, 'BASE_LDIF'):
-            retcode = subprocess.call(
-                (self.slapadd,
-                 "-l", os.path.abspath(self.BASE_LDIF),
-                 "-f", self.slapdconf),
-                cwd=self.basedir,
-                stdout=subprocess.PIPE if not self.DEBUG else None,
-                stderr=subprocess.PIPE if not self.DEBUG else None)
+            self._slapadd(self.BASE_LDIF)
 
-            if retcode != 0:
-                raise Error
+        if ldif is not None:
+            self._slapadd(ldif)
 
         self.slapd = subprocess.Popen(
             (self.slapdbin,
